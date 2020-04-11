@@ -1,27 +1,36 @@
 package plugins;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-import javax.xml.soap.Text;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.xml.TextElement;
 import org.mybatis.generator.api.dom.xml.VisitableElement;
 import org.mybatis.generator.api.dom.xml.XmlElement;
-import java.util.Iterator;
 
+/**
+ * Mybatis SQL XML のupdate文で新規登録時以外変更しないカラムを更新から除外する。 ex: 作成日日や作成者 プロパティで除外するカラムを複数指定できる。(カンマ区切り)
+ *
+ * @author taku.kotegawa
+ * @code <plugin type="plugins.SqlMapUpdateExcludeColumnPlugin">
+ * <property name="excludeColumns" value="created_at, changed_at"/>
+ * </plugin>
+ * @code
+ */
 public class SqlMapUpdateExcludeColumnPlugin extends PluginAdapter {
 
-    private String columns;
+    /** 除外項目のプロパティ名 */
+    private static final String PROPERTY_EXCLUDE_COLUMNS = "excludeColumns";
+
+    /** 除外項目名のリスト */
     private List<String> columnList = new ArrayList<>();
-    private List<Integer> indexList = new ArrayList<>();
 
     @Override
     public boolean validate(List<String> warnings) {
 
-        columns = properties.getProperty("searchString");
-        System.out.println(columns);
+        String columns = properties.getProperty(PROPERTY_EXCLUDE_COLUMNS);
 
         if (columns != null) {
             StringTokenizer st = new StringTokenizer(columns, ", ", false);
@@ -38,54 +47,67 @@ public class SqlMapUpdateExcludeColumnPlugin extends PluginAdapter {
     public boolean sqlMapUpdateByPrimaryKeySelectiveElementGenerated(
         XmlElement element, IntrospectedTable introspectedTable) {
 
-//        removeExcludeColumn(introspectedTable);
-
-//        for(VisitableElement ve : element.getElements()) {
-//            TextElement te = (TextElement)ve;
-//            System.out.println(te.getContent().toString());
-//        }
-
-//        XmlElement xe = (XmlElement) element.getElements().get(5);
-//
-//        System.out.println(xe.getElements());
-//        List<VisitableElement> xee = xe.getElements();
-//
-//        for(VisitableElement ve : xee) {
-//            xe = (XmlElement) ve;
-//            TextElement te = (TextElement) xe.getElements().get(0);
-//            System.out.println(te.getContent());
-//            if(te.getContent().startsWith("created_at")) {
-//                System.out.println("Hit");
-//            }
-//        }
-
-        accessElement2(element);
-
-//        accessElement(element);
-
+        removeColumn(element);
         return true;
     }
 
-    private void accessElement(XmlElement element) {
-        for(VisitableElement e: element.getElements()) {
-            if (e.getClass().equals(XmlElement.class)) {
-                XmlElement xml = (XmlElement) e;
+    @Override
+    public boolean sqlMapUpdateByPrimaryKeyWithBLOBsElementGenerated(
+        XmlElement element, IntrospectedTable introspectedTable) {
 
-                System.out.println(hasChildTextElement(xml, "created_at"));
-
-                accessElement(xml);
-            } else {
-                TextElement text = (TextElement) e;
-                System.out.println("text" + ":" + text.getContent());
-            }
-        }
+        removeColumn(element);
+        return true;
     }
 
-    private boolean hasChildTextElement(XmlElement xml, String content){
-        for(VisitableElement e: xml.getElements()) {
+    @Override
+    public boolean sqlMapUpdateByPrimaryKeyWithoutBLOBsElementGenerated(
+        XmlElement element, IntrospectedTable introspectedTable) {
+
+        removeColumn(element);
+        return true;
+    }
+
+    @Override
+    public boolean sqlMapUpdateByExampleSelectiveElementGenerated(XmlElement element,
+        IntrospectedTable introspectedTable) {
+
+        removeColumn(element);
+        return true;
+
+    }
+
+    @Override
+    public boolean sqlMapUpdateByExampleWithBLOBsElementGenerated(XmlElement element,
+        IntrospectedTable introspectedTable) {
+
+        removeColumn(element);
+        return true;
+    }
+
+    @Override
+    public boolean sqlMapUpdateByExampleWithoutBLOBsElementGenerated(XmlElement element,
+        IntrospectedTable introspectedTable) {
+
+        removeColumn(element);
+        return true;
+    }
+
+    /**
+     * 引数で渡されたXmlElement(SqlMapperへの出力情報)から更新を除外する項目の有無を確認する。 項目名は引数で指定できる。
+     *
+     * @param xml     XmlElement
+     * @param columns チェックする項目名のリスト
+     * @return true:項目あり, false:項目なし
+     */
+    private boolean hasExcludeColumn(XmlElement xml, List<String> columns) {
+
+        if (xml == null || columns == null) {
+            return false;
+        }
+
+        for (VisitableElement e : xml.getElements()) {
             if (e.getClass().equals(TextElement.class)) {
-                TextElement text = (TextElement) e;
-                if (text.getContent().toLowerCase().startsWith(content.toLowerCase())) {
+                if (hasExcludeColumn((TextElement)e, columns)) {
                     return true;
                 }
             }
@@ -93,70 +115,67 @@ public class SqlMapUpdateExcludeColumnPlugin extends PluginAdapter {
         return false;
     }
 
+    /**
+     * 引数で渡されたtextElementから更新を除外する項目の有無を確認する。 項目名は引数で指定できる。
+     *
+     * @param textElement TextElement
+     * @param columns 除外する項目名のリスト
+     * @return true:項目あり, false:項目なし
+     */
+    private boolean hasExcludeColumn(TextElement textElement, List<String> columns) {
+        for (String column : columns) {
+            if (textElement.getContent().toLowerCase().trim().startsWith(column.toLowerCase() + " ")) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-    private void accessElement2(XmlElement element) {
+    /**
+     * 引数で渡されたXmlElemntがtextElemntを子供に持つか確認する。
+     *
+     * @param xml XmlElement
+     * @return true:持つ, false:持たない
+     */
+    private boolean hasTextElement(XmlElement xml) {
 
-        Iterator<VisitableElement> it = element.getElements().iterator();
-        while(it.hasNext()){
+        if (xml == null) {
+            return false;
+        }
+
+        for (VisitableElement e : xml.getElements()) {
+            if (e.getClass().equals(TextElement.class)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * xmlElementから除外する項目を削除する。 ネスト構造対応
+     *
+     * @param rootElement xmlElement
+     */
+    private void removeColumn(XmlElement rootElement) {
+
+        Iterator<VisitableElement> it = rootElement.getElements().iterator();
+        while (it.hasNext()) {
             VisitableElement e = it.next();
             if (e.getClass().equals(XmlElement.class)) {
                 XmlElement xml = (XmlElement) e;
-
-                if (hasChildTextElement(xml, "created_at")) {
-                    it.remove();
+                if (hasTextElement(xml)) {
+                    if (hasExcludeColumn(xml, columnList)) {
+                        it.remove();
+                    }
                 } else {
-                    accessElement2(xml);
+                    removeColumn(xml);
+                }
+            } else if (e.getClass().equals(TextElement.class)) {
+                if (hasExcludeColumn((TextElement) e, columnList)) {
+                    it.remove();
                 }
             }
         }
-    }
-
-//    private void accessElement(XmlElement element) {
-//        System.out.println(element.hasChildren());
-//        if(element.hasChildren()) {
-//            XmlElement child = element.getElements();
-//        } else {
-//            TextElement text = (TextElement)element;
-//            System.out.println(text.getContent());
-//        }
-//    }
-
-    private void removeExcludeColumn(IntrospectedTable introspectedTable) {
-        if(columnList != null) {
-            for (String column : columnList) {
-
-//                for(IntrospectedColumn introspectedColumn : introspectedTable.getBaseColumns()) {
-//                    if (introspectedColumn.e) {
-//
-//                    }
-//
-//                }
-
-
-
-//                introspectedTable.getBaseColumns().removeIf(
-//                    introspectedColumn -> introspectedColumn.getActualColumnName()
-//                        .equalsIgnoreCase(column));
-            }
-        }
-    }
-
-    @Override
-    public boolean sqlMapUpdateByPrimaryKeyWithoutBLOBsElementGenerated(
-        XmlElement element, IntrospectedTable introspectedTable) {
-
-//        removeExcludeColumn(introspectedTable);
-
-        return true;
-    }
-
-    @Override
-    public boolean sqlMapUpdateByExampleSelectiveElementGenerated(XmlElement element, IntrospectedTable introspectedTable) {
-
-//        removeExcludeColumn(introspectedTable);
-
-        return true;
-
     }
 
 }
