@@ -15,4 +15,5 @@ mvn mybatis-generator:generate
 
 ★generatorConfig.xml のファイル名を変更した場合は、引数にファイル名を指定できる。
 
-mvn -DconfigurationFile=src/main/resources/generatorConfg.xml mybatis-generator:generate
+mvn -Dmybatis.generator.configurationFile=src/main/resources/generatorConfig_account.xml mybatis-generator:generate
+
