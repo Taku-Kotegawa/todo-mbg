@@ -72,37 +72,38 @@
     <!-- データベース接続設定 -->
     <jdbcConnection
       driverClass="org.postgresql.Driver"
-      connectionURL="jdbc:postgresql://127.0.0.1:5432/simplecrud"
+      connectionURL="jdbc:postgresql://127.0.0.1:5432/myscaffold"
       userId="postgres"
       password="postgres"/>
 
+    <!-- カスタマイズされたTypeResolverを使用 -->
     <!-- 日付項目をLocalDateTimeにする -->
-    <javaTypeResolver>
+    <javaTypeResolver type="types.JavaTypeResolverCustomImpl">
       <property name="useJSR310Types" value="true"/>
     </javaTypeResolver>
 
     <!-- Model 出力設定-->
     <javaModelGenerator
-      targetPackage="com.example.domain.model.simplecrud"
-      targetProject="/home/taku/sites/todo/app/simplecrud/simplecrud-domain/src/main/java/">
+      targetPackage="com.example.domain.model"
+      targetProject="/home/taku/sites/myscaffold/myscaffold-domain/src/main/java">
     </javaModelGenerator>
 
     <!-- repository.xml 出力設定 -->
     <sqlMapGenerator
-      targetPackage="com.example.domain.repository.simplecrud"
-      targetProject="/home/taku/sites/todo/app/simplecrud/simplecrud-domain/src/main/resources/">
+      targetPackage="com.example.domain.repository.account"
+      targetProject="/home/taku/sites/myscaffold/myscaffold-domain/src/main/resources/">
     </sqlMapGenerator>
 
     <!-- repository.java 出力設定 -->
     <javaClientGenerator
-      targetPackage="com.example.domain.repository.simplecrud"
-      targetProject="/home/taku/sites/todo/app/simplecrud/simplecrud-domain/src/main/java/"
+      targetPackage="com.example.domain.repository.account"
+      targetProject="/home/taku/sites/myscaffold/myscaffold-domain/src/main/java"
       type="XMLMAPPER">
     </javaClientGenerator>
 
     <!-- 対象となるテーブルを指定 @see http://mybatis.org/generator/configreference/table.html -->
     <table schema="public"
-      tableName="%"
+      tableName="role"
       enableInsert="true"
       enableUpdateByPrimaryKey="true"
       enableUpdateByExample="true"
@@ -112,6 +113,7 @@
       enableSelectByExample="true"
       enableCountByExample="true"
       modelType="flat">
+      <property name="modelOnly" value="false"/>
     </table>
 
   </context>
