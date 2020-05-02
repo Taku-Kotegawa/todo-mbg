@@ -41,7 +41,7 @@
 
     <!-- バイナリ形式の項目が含まれるModelにimport java.io.InputStreamを追加 -->
     <!-- byte[] と出力されるものInputStreamに変更したい場合は、JavaTypeResolverDefaultImplを調整 -->
-    <plugin type="plugins.ModelAddImportInputStreamPlugin" />
+<!--    <plugin type="plugins.ModelAddImportInputStreamPlugin" />-->
 
     <!-- MyBatis Generator 標準プラグイン
     @see https://mybatis.org/generator/reference/plugins.html
@@ -81,7 +81,8 @@
 
     <!-- カスタマイズされたTypeResolverを使用 -->
     <!-- 日付項目をLocalDateTimeにする -->
-    <javaTypeResolver type="types.JavaTypeResolverCustomImpl">
+    <!--    <javaTypeResolver type="types.JavaTypeResolverCustomImpl">-->
+    <javaTypeResolver>
       <property name="useJSR310Types" value="true"/>
     </javaTypeResolver>
 
