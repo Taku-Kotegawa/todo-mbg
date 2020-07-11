@@ -17,3 +17,4 @@ mvn mybatis-generator:generate
 
 mvn -Dmybatis.generator.configurationFile=src/main/resources/generatorConfig_account.xml mybatis-generator:generate
 
+mvn -Dmybatis.generator.configurationFile=src/main/resources/generatorConfig_account.xml mybatis-generator:generate

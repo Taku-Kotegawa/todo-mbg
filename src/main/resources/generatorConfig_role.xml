@@ -103,7 +103,7 @@
     </javaClientGenerator>
 
     <!-- 対象となるテーブルを指定 @see http://mybatis.org/generator/configreference/table.html -->
-    <table schema="public"
+    <table
       tableName="role"
       enableInsert="true"
       enableUpdateByPrimaryKey="true"
