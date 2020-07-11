@@ -15,26 +15,39 @@
  */
 package plugins;
 
-import java.util.List;
-
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
+
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Entityのスーパークラスを設定するプラグイン
  */
 public class SetSupperClassPlugin extends PluginAdapter {
 
-	public boolean validate(List<String> warnings) {
-		return true;
-	}
+    private String className = "com.example.model.SuperClass";
 
-	@Override
+    public boolean validate(List<String> warnings) {
+        return true;
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+        super.setProperties(properties);
+        for (String propertyName : properties.stringPropertyNames()) {
+            if (propertyName.equals("className")) {
+                this.className = properties.getProperty("className");
+            }
+        }
+    }
+
+    @Override
     public boolean modelBaseRecordClassGenerated(TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
-	    
-	    setSupperClass(topLevelClass);
+
+        setSupperClass(topLevelClass);
         return true;
     }
 
@@ -64,8 +77,8 @@ public class SetSupperClassPlugin extends PluginAdapter {
      * @param topLevelClass
      */
     protected void setSupperClass(TopLevelClass topLevelClass) {
-    	
-        FullyQualifiedJavaType superClass = new FullyQualifiedJavaType("com.example.domain.model.AbstractEntity");
+
+        FullyQualifiedJavaType superClass = new FullyQualifiedJavaType(this.className);
         topLevelClass.setSuperClass(superClass);
     }
 }
