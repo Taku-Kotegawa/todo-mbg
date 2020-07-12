@@ -13,13 +13,14 @@
  */
 package plugins;
 
-import java.util.List;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.Field;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
+
+import java.util.List;
 
 public class AddFieldAnotationPlugin extends PluginAdapter {
 
@@ -66,13 +67,17 @@ public class AddFieldAnotationPlugin extends PluginAdapter {
 
         // アノテーションJsonFormatを追記する
         if ("java.time.LocalDateTime"
-            .equals(field.getType().getFullyQualifiedNameWithoutTypeParameters())) {
+                .equals(field.getType().getFullyQualifiedNameWithoutTypeParameters())) {
             field.addAnnotation(
-                "@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constant.DATETIME_FORMAT)");
+                    "@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = \"yyyy/MM/dd HH:mm:ss\")");
         } else if ("java.time.LocalDate"
-            .equals(field.getType().getFullyQualifiedNameWithoutTypeParameters())) {
+                .equals(field.getType().getFullyQualifiedNameWithoutTypeParameters())) {
             field.addAnnotation(
-                "@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constant.DATE_FORMAT");
+                    "@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = \"yyyy/MM/dd\")");
+        }
+
+        if (!introspectedColumn.isNullable()) {
+            field.addAnnotation("@NonNull");
         }
 
         return true;
@@ -81,10 +86,14 @@ public class AddFieldAnotationPlugin extends PluginAdapter {
     private void addImport(TopLevelClass topLevelClass) {
         // アノテーションJsonFormatを追記するため、JsonFormatをインポートする
         addImport(topLevelClass,
-            new FullyQualifiedJavaType("com.fasterxml.jackson.annotation.JsonFormat"));
+                new FullyQualifiedJavaType("com.fasterxml.jackson.annotation.JsonFormat"));
         // 日付フォーマットの定数化のため、Constantをインポートする
         addImport(topLevelClass,
-            new FullyQualifiedJavaType("com.example.common.constant.Constant"));
+                new FullyQualifiedJavaType("com.example.common.constant.Constant"));
+
+        addImport(topLevelClass,
+                new FullyQualifiedJavaType("lombok.NonNull"));
+
     }
 
     /**

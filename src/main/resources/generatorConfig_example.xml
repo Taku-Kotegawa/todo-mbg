@@ -31,7 +31,7 @@
         </plugin>
 
         <!-- フィールド(プロパティ)のアノテーションを追加する -->
-        <!--    <plugin type="plugins.AddFieldAnotationPlugin"/>-->
+        <plugin type="plugins.AddFieldAnotationPlugin"/>
 
         <!-- Modelの比較用メソッドを追加する-->
         <!--    <plugin type="plugins.AddIsValueChangedMethodPlugin"/>-->
