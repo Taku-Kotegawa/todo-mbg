@@ -88,8 +88,8 @@ public class AddFieldAnotationPlugin extends PluginAdapter {
         addImport(topLevelClass,
                 new FullyQualifiedJavaType("com.fasterxml.jackson.annotation.JsonFormat"));
         // 日付フォーマットの定数化のため、Constantをインポートする
-        addImport(topLevelClass,
-                new FullyQualifiedJavaType("com.example.common.constant.Constant"));
+//        addImport(topLevelClass,
+//                new FullyQualifiedJavaType("com.example.common.constant.Constant"));
 
         addImport(topLevelClass,
                 new FullyQualifiedJavaType("lombok.NonNull"));

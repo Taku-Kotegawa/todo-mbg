@@ -18,3 +18,8 @@ mvn mybatis-generator:generate
 mvn -Dmybatis.generator.configurationFile=src/main/resources/generatorConfig_account.xml mybatis-generator:generate
 
 mvn -Dmybatis.generator.configurationFile=src/main/resources/generatorConfig_account.xml mybatis-generator:generate
+
+
+## 参考
+
+https://www.nextdoorwith.info/wp/se/imptech/mybatis/mybatis-generator-custom-plugin/
