@@ -23,3 +23,5 @@ mvn -Dmybatis.generator.configurationFile=src/main/resources/generatorConfig_acc
 ## 参考
 
 https://www.nextdoorwith.info/wp/se/imptech/mybatis/mybatis-generator-custom-plugin/
+
+https://github.com/dcendents/mybatis-generator-plugins

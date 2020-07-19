@@ -58,6 +58,10 @@
             <property name="EqualsAndHashCode.callSuper" value="true"/>
         </plugin>
 
+        <plugin type="plugins.SqlUpdateKeyAddVersionPlugin">
+            <property name="versionColumns" value="version, lock_version"/>
+        </plugin>
+
 
         <!-- Modelにインタフェースを設定する -->
         <!--        <plugin type="plugins.BeanImplementationPlugin" />-->
