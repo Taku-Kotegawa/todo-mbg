@@ -138,19 +138,23 @@ public class SqlUpdateKeyAddVersionPlugin extends PluginAdapter {
      * @param introspectedTable introspectedTable
      */
     private void addMethodSqlMap(XmlElement element, IntrospectedTable introspectedTable) {
-        XmlElement addElement = new XmlElement(element);
-        String newValue = getNewIdName(element.getAttributes().get(0).getValue());
-        Attribute id = new Attribute("id", newValue);
-        addElement.getAttributes().remove(0);
-        addElement.getAttributes().add(0, id);
 
-        String versionClause = findTextByElement(addElement, versionColName);
-        // , jokyo
-        addElement.getElements().add(new TextElement(" and " + versionClause.substring(0, versionClause.length() - 1)));
+        if (versionColName != null) {
+            XmlElement addElement = new XmlElement(element);
+            String newValue = getNewIdName(element.getAttributes().get(0).getValue());
+            Attribute id = new Attribute("id", newValue);
+            addElement.getAttributes().remove(0);
+            addElement.getAttributes().add(0, id);
 
-        replaceTextByElement(addElement, versionColName);
+            String versionClause = findTextByElement(addElement, versionColName);
+            // , jokyo
+            addElement.getElements().add(new TextElement(" and " + versionClause.substring(0, versionClause.length() - 1)));
 
-        addElementList.add(addElement);
+            replaceTextByElement(addElement, versionColName);
+
+            addElementList.add(addElement);
+        }
+
 
     }
 
