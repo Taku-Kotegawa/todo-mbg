@@ -42,6 +42,8 @@ public class SqlUpdateKeyAddVersionPlugin extends PluginAdapter {
      */
     private String versionColName;
 
+    private IntrospectedColumn versionColumn;
+
     @Override
     public boolean validate(List<String> warnings) {
         String columns = properties.getProperty(PROPERTY_VERSION_COLUMNS);
@@ -71,17 +73,17 @@ public class SqlUpdateKeyAddVersionPlugin extends PluginAdapter {
      * @param introspectedTable introspectedTable
      * @return バージョン管理用のカラム名
      */
-    private String findVersionColumn(IntrospectedTable introspectedTable, List<String> columnList) {
+    private void findVersionColumn(IntrospectedTable introspectedTable, List<String> columnList) {
         ListIterator<IntrospectedColumn> it = introspectedTable.getBaseColumns().listIterator();
         while (it.hasNext()) {
             IntrospectedColumn col = it.next();
             for (String colName : columnList) {
                 if (col.getActualColumnName().equals(colName)) {
-                    return col.getActualColumnName();
+                    versionColumn = col;
+                    versionColName = col.getActualColumnName();
                 }
             }
         }
-        return null;
     }
 
     /**
@@ -107,7 +109,7 @@ public class SqlUpdateKeyAddVersionPlugin extends PluginAdapter {
             Method method, Interface interfaze, IntrospectedTable introspectedTable) {
 
         if (versionColName == null) {
-            versionColName = findVersionColumn(introspectedTable, this.columnList);
+            findVersionColumn(introspectedTable, this.columnList);
         }
 
         addMethodClient(method, interfaze, introspectedTable);
@@ -139,16 +141,20 @@ public class SqlUpdateKeyAddVersionPlugin extends PluginAdapter {
      */
     private void addMethodSqlMap(XmlElement element, IntrospectedTable introspectedTable) {
 
+
         if (versionColName != null) {
+
             XmlElement addElement = new XmlElement(element);
             String newValue = getNewIdName(element.getAttributes().get(0).getValue());
             Attribute id = new Attribute("id", newValue);
             addElement.getAttributes().remove(0);
             addElement.getAttributes().add(0, id);
 
-            String versionClause = findTextByElement(addElement, versionColName);
-            // , jokyo
-            addElement.getElements().add(new TextElement(" and " + versionClause.substring(0, versionClause.length() - 1)));
+//            String versionClause = findTextByElement(addElement, versionColName);
+
+            // version = #{version,jdbcType=BIGINT}
+            String whereClause = " and " + versionColName + " = #{" + versionColName + ",jdbcType=" + versionColumn.getJdbcTypeName() + "}";
+            addElement.getElements().add(new TextElement(whereClause));
 
             replaceTextByElement(addElement, versionColName);
 
@@ -159,29 +165,29 @@ public class SqlUpdateKeyAddVersionPlugin extends PluginAdapter {
     }
 
     /**
-     * SQLXMLからwordを含む検索し、最初に一致した行を返す。
+     * SQLXMLからwordを含む検索し、最初に一致したを返す。
      *
      * @param element element
      * @param word    word
-     * @return 一致した１行
+     * @return 一致したword
      */
-    private String findTextByElement(XmlElement element, String word) {
-        for (VisitableElement e : element.getElements()) {
-            if (e instanceof XmlElement) {
-                String content = findTextByElement((XmlElement) e, word);
-                if (content != null) {
-                    return content;
-                }
-            } else if (e instanceof TextElement) {
-                TextElement te = (TextElement) e;
-                if (te.getContent().contains(word)) {
-                    String beforeContent = te.getContent();
-                    return beforeContent.trim();
-                }
-            }
-        }
-        return null;
-    }
+//    private String findTextByElement(XmlElement element, String word) {
+//        for (VisitableElement e : element.getElements()) {
+//            if (e instanceof XmlElement) {
+//                String content = findTextByElement((XmlElement) e, word);
+//                if (content != null) {
+//                    return content;
+//                }
+//            } else if (e instanceof TextElement) {
+//                TextElement te = (TextElement) e;
+//                if (te.getContent().contains(word)) {
+//                    String beforeContent = te.getContent();
+//                    return beforeContent.trim();
+//                }
+//            }
+//        }
+//        return null;
+//    }
 
     /**
      * バージョン管理用項目のUPDATE命令を書き換え(x = x + 1,)
@@ -202,7 +208,11 @@ public class SqlUpdateKeyAddVersionPlugin extends PluginAdapter {
             } else if (e instanceof TextElement) {
                 TextElement te = (TextElement) e;
                 if (te.getContent().contains(word)) {
-                    it.set(new TextElement("  " + versionColName + " = " + versionColName + " + 1,"));
+                    String setWord = " ";
+                    if (te.getContent().contains("set " + versionColName)) {
+                        setWord = "set ";
+                    }
+                    it.set(new TextElement(setWord + versionColName + " = " + versionColName + " + 1,"));
                     return true;
                 }
             }
@@ -237,6 +247,7 @@ public class SqlUpdateKeyAddVersionPlugin extends PluginAdapter {
 
         // SQLに新規メソッド用のSQLを追加
         document.getRootElement().getElements().addAll(addElementList);
+        addElementList.clear();
         return true;
     }
 

@@ -31,7 +31,7 @@
         </plugin>
 
         <!-- フィールド(プロパティ)のアノテーションを追加する -->
-        <plugin type="plugins.AddFieldAnotationPlugin"/>
+        <plugin type="plugins.AddFieldAnnotationPlugin"/>
 
         <!-- Modelの比較用メソッドを追加する-->
         <!--    <plugin type="plugins.AddIsValueChangedMethodPlugin"/>-->
@@ -39,19 +39,17 @@
         <!-- Lombok対応 @see https://github.com/softwareloop/mybatis-generator-lombok-plugin -->
         <plugin type="plugins.LombokPlugin">
             <!-- enable annotations -->
-            <property name="builder" value="true"/>
+            <property name="builder" value="false" />
             <!-- annotation's option(boolean) -->
             <!--            <property name="builder.fluent" value="false"/>-->
             <!-- annotation's option(String) -->
             <!--            <property name="builder.builderMethodName" value="myBuilder"/>-->
 
-            <property name="accessors" value="true"/>
+            <property name="accessors" value="false"/>
             <!-- annotation's option(array of String) -->
             <!--            <property name="accessors.prefix" value="m_, _"/>-->
             <property name="accessors.chain" value="true"/>
-
-            <!-- disable annotations -->
-            <property name="allArgsConstructor" value="true"/>
+            <property name="allArgsConstructor" value="false"/>
             <property name="toString" value="true"/>
             <property name="toString.callSuper" value="true"/>
             <property name="EqualsAndHashCode" value="true"/>
@@ -62,14 +60,14 @@
             <property name="versionColumns" value="version, lock_version"/>
         </plugin>
 
-        <plugin type="plugins.SetGeneratedKeyPlugin">
-            <property name="autoIncrementType" value=""/>
-            <property name="sqlStatement" value=""/>
-            <property name="identity" value=""/>
-        </plugin>
+<!--        <plugin type="plugins.SetGeneratedKeyPlugin">-->
+<!--            <property name="autoIncrementType" value=""/>-->
+<!--            <property name="sqlStatement" value=""/>-->
+<!--            <property name="identity" value=""/>-->
+<!--        </plugin>-->
 
         <!-- Modelにインタフェースを設定する -->
-        <!--        <plugin type="plugins.BeanImplementationPlugin" />-->
+        <plugin type="plugins.BeanImplementationPlugin" />
 
         <!-- MyBatis Generator 標準プラグイン
         @see https://mybatis.org/generator/reference/plugins.html
@@ -139,12 +137,22 @@
 
         <!-- 対象となるテーブルを指定 @see http://mybatis.org/generator/configreference/table.html -->
         <table
-                tableName="sample1"
-                enableInsert="true"
-                enableUpdateByPrimaryKey="true"
-                enableUpdateByExample="true"
-                enableDeleteByPrimaryKey="true"
-                enableDeleteByExample="true"
+                tableName="staff"
+                modelType="flat">
+            <generatedKey column="id" sqlStatement="JDBC"/>
+        </table>
+        <table
+                tableName="%_rev"
+                modelType="flat">
+            <property name="virtualKeyColumns" value="id, version" />
+        </table>
+        <table
+                tableName="%_view"
+                enableInsert="false"
+                enableUpdateByPrimaryKey="false"
+                enableUpdateByExample="false"
+                enableDeleteByPrimaryKey="false"
+                enableDeleteByExample="false"
                 enableSelectByPrimaryKey="true"
                 enableSelectByExample="true"
                 enableCountByExample="true"

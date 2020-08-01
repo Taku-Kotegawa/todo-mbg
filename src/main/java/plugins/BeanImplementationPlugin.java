@@ -1,23 +1,23 @@
 package plugins;
 
-import java.util.List;
-
 import org.mybatis.generator.api.FullyQualifiedTable;
-import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.IntrospectedTable;
+import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
+
+import java.util.List;
 
 /**
  * MyBatis Generatorで生成するクラスに、特定のインタフェースを実装させるプラグイン。
  */
 public class BeanImplementationPlugin extends PluginAdapter {
 
-    private FullyQualifiedJavaType bean;
+    private final FullyQualifiedJavaType bean;
 
     public BeanImplementationPlugin() {
         bean = new FullyQualifiedJavaType(
-                "net.kronosjp.jyukutyo.MyInterface");
+                "com.example.domain.common.hasWhoColumnInterface");
     }
 
     public boolean validate(List<String> warnings) {
