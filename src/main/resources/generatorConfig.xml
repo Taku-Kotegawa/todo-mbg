@@ -6,7 +6,8 @@
 
   <!-- JDBCドライバを直接指定する -->
   <classPathEntry
-    location="/home/taku/.m2/repository/org/postgresql/postgresql/42.2.5/postgresql-42.2.5.jar"/>
+    location="/home/taku/.m2/repository/mysql/mysql-connector-java/8.0.21/mysql-connector-java-8.0.21.jar"/>
+
 
   <context id="context1" targetRuntime="MyBatis3">
 
@@ -66,6 +67,11 @@
 
     -->
 
+    <plugin type="plugins.SqlUpdateKeyAddLastUpdatedPlugin">
+      <property name="lastUpdatedColumns" value="TM_LU"/>
+    </plugin>
+
+
     <!-- コメントの出力仕様 -->
     <commentGenerator>
       <property name="suppressAllComments" value="false"/>
@@ -75,10 +81,10 @@
 
     <!-- データベース接続設定 -->
     <jdbcConnection
-      driverClass="org.postgresql.Driver"
-      connectionURL="jdbc:postgresql://127.0.0.1:5432/myscaffold"
-      userId="postgres"
-      password="postgres"/>
+      driverClass="com.mysql.cj.jdbc.Driver"
+      connectionURL="jdbc:mysql://localhost:3306/asg?serverTimezone=JST"
+      userId="asg"
+      password="asg"/>
 
     <!-- カスタマイズされたTypeResolverを使用 -->
     <!-- 日付項目をLocalDateTimeにする -->
@@ -90,26 +96,26 @@
 
     <!-- Model 出力設定-->
     <javaModelGenerator
-      targetPackage="com.example.domain.model"
-      targetProject="/home/taku/sites/myscaffold/myscaffold-domain/src/main/java">
+      targetPackage="com.asg.domain.model"
+      targetProject="/home/taku/sites/terasoluna-mariadb/artemis/artemis-domain/src/main/java">
     </javaModelGenerator>
 
     <!-- repository.xml 出力設定 -->
     <sqlMapGenerator
-      targetPackage="com.example.domain.repository.account"
-      targetProject="/home/taku/sites/myscaffold/myscaffold-domain/src/main/resources/">
+      targetPackage="com.asg.domain.repository"
+      targetProject="/home/taku/sites/terasoluna-mariadb/artemis/artemis-domain/src/main/resources/">
     </sqlMapGenerator>
 
     <!-- repository.java 出力設定 -->
     <javaClientGenerator
-      targetPackage="com.example.domain.repository.account"
-      targetProject="/home/taku/sites/myscaffold/myscaffold-domain/src/main/java"
+      targetPackage="com.asg.domain.repository"
+      targetProject="/home/taku/sites/terasoluna-mariadb/artemis/artemis-domain/src/main/java"
       type="XMLMAPPER">
     </javaClientGenerator>
 
     <!-- 対象となるテーブルを指定 @see http://mybatis.org/generator/configreference/table.html -->
     <table
-      tableName="account%"
+      tableName="TM%"
       enableInsert="true"
       enableUpdateByPrimaryKey="true"
       enableUpdateByExample="true"
@@ -119,6 +125,18 @@
       enableSelectByExample="true"
       enableCountByExample="true"
       modelType="flat">
+    </table>
+    <table
+            tableName="TT%"
+            enableInsert="true"
+            enableUpdateByPrimaryKey="true"
+            enableUpdateByExample="true"
+            enableDeleteByPrimaryKey="true"
+            enableDeleteByExample="true"
+            enableSelectByPrimaryKey="true"
+            enableSelectByExample="true"
+            enableCountByExample="true"
+            modelType="flat">
     </table>
 
   </context>
