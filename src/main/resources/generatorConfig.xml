@@ -115,7 +115,8 @@
 
     <!-- 対象となるテーブルを指定 @see http://mybatis.org/generator/configreference/table.html -->
     <table
-      tableName="TM%"
+      schema="asg"
+      tableName="T_\_%"
       enableInsert="true"
       enableUpdateByPrimaryKey="true"
       enableUpdateByExample="true"
@@ -127,7 +128,7 @@
       modelType="flat">
     </table>
     <table
-            tableName="TT%"
+            tableName="TM_USER"
             enableInsert="true"
             enableUpdateByPrimaryKey="true"
             enableUpdateByExample="true"
@@ -137,6 +138,7 @@
             enableSelectByExample="true"
             enableCountByExample="true"
             modelType="flat">
+      <generatedKey column="CD_USER" sqlStatement="MySql" identity="true" />
     </table>
 
   </context>
