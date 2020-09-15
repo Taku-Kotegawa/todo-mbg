@@ -7,17 +7,34 @@ import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
 
 import java.util.List;
+import java.util.Properties;
 
 /**
  * MyBatis Generatorで生成するクラスに、特定のインタフェースを実装させるプラグイン。
  */
 public class BeanImplementationPlugin extends PluginAdapter {
 
-    private final FullyQualifiedJavaType bean;
+    private String interfaceName;
+
+    private FullyQualifiedJavaType bean;
+
+
+    @Override
+    public void setProperties(Properties properties) {
+        super.setProperties(properties);
+        for (String propertyName : properties.stringPropertyNames()) {
+            if (propertyName.equals("interfaceName")) {
+                this.interfaceName = properties.getProperty("interfaceName");
+                break;
+            }
+        }
+
+        bean = new FullyQualifiedJavaType(this.interfaceName);
+    }
+
+
 
     public BeanImplementationPlugin() {
-        bean = new FullyQualifiedJavaType(
-                "com.example.domain.common.hasWhoColumnInterface");
     }
 
     public boolean validate(List<String> warnings) {

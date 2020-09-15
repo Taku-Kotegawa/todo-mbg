@@ -38,7 +38,9 @@
     <plugin type="com.softwareloop.mybatis.generator.plugins.LombokPlugin"/>
 
     <!-- Modelにインタフェースを設定する -->
-    <!--        <plugin type="plugins.BeanImplementationPlugin" />-->
+    <plugin type="plugins.BeanImplementationPlugin">
+      <property name="interfaceName" value="com.example.domain.common.SetUpdateInterface"/>
+    </plugin>
 
     <!-- MyBatis Generator 標準プラグイン
     @see https://mybatis.org/generator/reference/plugins.html
