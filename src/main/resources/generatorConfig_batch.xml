@@ -10,8 +10,6 @@
 
   <context id="context1" targetRuntime="MyBatis3">
 
-    <property name="javaFileEncoding" value="UTF-8" />
-
     <!-- Modelクラス名のDtoを付加する-->
     <!-- <plugin type="plugins.BeanClassNamePlugin"/>-->
 
@@ -58,6 +56,10 @@
     -->
     <plugin type="org.mybatis.generator.plugins.VirtualPrimaryKeyPlugin"/>
 
+    <!-- バイナリ形式の項目が含まれるModelにimport java.io.InputStreamを追加 -->
+    <!-- byte[] と出力されるものInputStreamに変更したい場合は、JavaTypeResolverDefaultImplを調整 -->
+<!--    <plugin type="plugins.ModelAddImportInputStreamPlugin" />-->
+
     <!--
     その他の参考情報
     @see https://github.com/dcendents/mybatis-generator-plugins
@@ -74,7 +76,7 @@
     <!-- データベース接続設定 -->
     <jdbcConnection
       driverClass="org.postgresql.Driver"
-      connectionURL="jdbc:postgresql://127.0.0.1:5432/myscaffold"
+      connectionURL="jdbc:postgresql://127.0.0.1:5432/batch?currentSchema=batch"
       userId="postgres"
       password="postgres"/>
 
@@ -85,28 +87,29 @@
       <property name="useJSR310Types" value="true"/>
     </javaTypeResolver>
 
+
     <!-- Model 出力設定-->
     <javaModelGenerator
-      targetPackage="com.example.domain.model"
-      targetProject="/home/taku/sites/myscaffold/myscaffold-domain/src/main/java">
+      targetPackage="org.terasoluna.batch.common.model"
+      targetProject="/home/taku/sites/batch/terasoluna-batch-tutorial/src/main/java">
     </javaModelGenerator>
 
     <!-- repository.xml 出力設定 -->
     <sqlMapGenerator
-      targetPackage="com.example.domain.repository.passwordhistory"
-      targetProject="/home/taku/sites/myscaffold/myscaffold-domain/src/main/resources/">
+      targetPackage="org.terasoluna.batch.common.repository"
+      targetProject="/home/taku/sites/batch/terasoluna-batch-tutorial/src/main/resources">
     </sqlMapGenerator>
 
     <!-- repository.java 出力設定 -->
     <javaClientGenerator
-      targetPackage="com.example.domain.repository.passwordhistory"
-      targetProject="/home/taku/sites/myscaffold/myscaffold-domain/src/main/java"
+      targetPackage="org.terasoluna.batch.common.repository"
+      targetProject="/home/taku/sites/batch/terasoluna-batch-tutorial/src/main/java"
       type="XMLMAPPER">
     </javaClientGenerator>
 
     <!-- 対象となるテーブルを指定 @see http://mybatis.org/generator/configreference/table.html -->
     <table
-      tableName="password_history"
+      tableName="member_info"
       enableInsert="true"
       enableUpdateByPrimaryKey="true"
       enableUpdateByExample="true"

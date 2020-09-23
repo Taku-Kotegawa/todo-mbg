@@ -8,8 +8,9 @@
   <classPathEntry
     location="/home/taku/.m2/repository/mysql/mysql-connector-java/8.0.21/mysql-connector-java-8.0.21.jar"/>
 
-
   <context id="context1" targetRuntime="MyBatis3">
+
+    <property name="javaFileEncoding" value="UTF-8" />
 
     <!-- Modelクラス名のDtoを付加する-->
     <!-- <plugin type="plugins.BeanClassNamePlugin"/>-->
