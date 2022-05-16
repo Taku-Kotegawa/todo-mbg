@@ -14,10 +14,7 @@ import org.mybatis.generator.api.dom.xml.XmlElement;
  * Mybatis SQL XML のupdate文で新規登録時以外変更しないカラムを更新から除外する。 ex: 作成日日や作成者 プロパティで除外するカラムを複数指定できる。(カンマ区切り)
  *
  * @author taku.kotegawa
- * @code <plugin type="plugins.SqlMapUpdateExcludeColumnPlugin">
- * <property name="excludeColumns" value="created_at, changed_at"/>
- * </plugin>
- * @code
+ *
  */
 public class SqlMapUpdateExcludeColumnPlugin extends PluginAdapter {
 

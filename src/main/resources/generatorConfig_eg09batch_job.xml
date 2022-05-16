@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+
+  <!-- JDBCドライバを直接指定する -->
+  <classPathEntry
+    location="/home/taku/.m2/repository/org/postgresql/postgresql/42.2.5/postgresql-42.2.5.jar"/>
+
+  <context id="context1" targetRuntime="MyBatis3">
+
+    <property name="javaFileEncoding" value="UTF-8" />
+
+    <!-- Modelクラス名のDtoを付加する-->
+    <!-- <plugin type="plugins.BeanClassNamePlugin"/>-->
+
+    <!-- Mapperクラス名のMapperをRepositoryに変更する。-->
+    <plugin type="plugins.MapperClassNamePlugin"/>
+
+    <!-- Mapperクラス名のMapperをRepositoryに変更する。-->
+    <plugin type="plugins.MapperXmlNamePlugin"/>
+
+    <!-- SQLMapperのUpdate命令から特定の項目を除外, excludeColumnsにテーブル項目名を指定, カンマ区切りで複数指定可能 -->
+    <plugin type="plugins.SqlMapUpdateExcludeColumnPlugin">
+      <property name="excludeColumns" value="created_at"/>
+    </plugin>
+
+    <!-- Modelのスーパークラス(extends)を追加する -->
+<!--    <plugin type="plugins.SetSupperClassPlugin"/>-->
+
+    <!-- フィールド(プロパティ)のアノテーションを追加する -->
+<!--    <plugin type="plugins.AddFieldAnotationPlugin"/>-->
+
+    <!-- Modelの比較用メソッドを追加する-->
+<!--    <plugin type="plugins.AddIsValueChangedMethodPlugin"/>-->
+
+    <!-- Lombok対応 @see https://github.com/softwareloop/mybatis-generator-lombok-plugin -->
+    <plugin type="com.softwareloop.mybatis.generator.plugins.LombokPlugin"/>
+
+    <!-- Modelにインタフェースを設定する -->
+<!--    <plugin type="plugins.BeanImplementationPlugin">-->
+<!--      <property name="interfaceName" value="com.example.domain.common.SetUpdateInterface"/>-->
+<!--    </plugin>-->
+
+    <!-- MyBatis Generator 標準プラグイン
+    @see https://mybatis.org/generator/reference/plugins.html
+    @see https://www.unitrust.co.jp/3620 -->
+    <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
+<!--    <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>-->
+<!--    <plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin"/>-->
+    <!-- <plugin type="org.mybatis.generator.plugins.CaseInsensitiveLikePlugin" /> -->
+    <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"/>
+    <!--
+    <plugin type="org.mybatis.generator.plugins.RenameExampleClassPlugin" >
+        <property name="searchString" value="Example$"/>
+        <property name="replaceString" value="Criteria"/>
+    </plugin>
+    -->
+    <plugin type="org.mybatis.generator.plugins.VirtualPrimaryKeyPlugin"/>
+
+    <!-- バイナリ形式の項目が含まれるModelにimport java.io.InputStreamを追加 -->
+    <!-- byte[] と出力されるものInputStreamに変更したい場合は、JavaTypeResolverDefaultImplを調整 -->
+<!--    <plugin type="plugins.ModelAddImportInputStreamPlugin" />-->
+
+    <!--
+    その他の参考情報
+    @see https://github.com/dcendents/mybatis-generator-plugins
+
+    -->
+
+    <!-- コメントの出力仕様 -->
+    <commentGenerator>
+      <property name="suppressAllComments" value="false"/>
+      <property name="suppressDate" value="true"/>
+      <property name="addRemarkComments" value="true"/>
+    </commentGenerator>
+
+    <!-- データベース接続設定 -->
+    <jdbcConnection
+      driverClass="org.postgresql.Driver"
+      connectionURL="jdbc:postgresql://localhost:5432/cmsboot?currentSchema=batch"
+      userId="admin"
+      password="admin"/>
+
+    <!-- カスタマイズされたTypeResolverを使用 -->
+    <!-- 日付項目をLocalDateTimeにする -->
+    <!--    <javaTypeResolver type="types.JavaTypeResolverCustomImpl">-->
+    <javaTypeResolver>
+      <property name="useJSR310Types" value="true"/>
+    </javaTypeResolver>
+
+    <!-- Model 出力設定-->
+    <javaModelGenerator
+      targetPackage="com.example.eg09batch.base.domain.model.mbg"
+      targetProject="/home/taku/sites/batch-demo01/src/main/java">
+    </javaModelGenerator>
+
+    <!-- repository.xml 出力設定 -->
+    <sqlMapGenerator
+      targetPackage="com.example.eg09batch.base.application.repository.mbg"
+      targetProject="/home/taku/sites/batch-demo01/src/main/resources">
+    </sqlMapGenerator>
+
+    <!-- repository.java 出力設定 -->
+    <javaClientGenerator
+      targetPackage="com.example.eg09batch.base.application.repository.mbg"
+      targetProject="/home/taku/sites/batch-demo01/src/main/java"
+      type="XMLMAPPER">
+    </javaClientGenerator>
+
+    <!-- 対象となるテーブルを指定 @see http://mybatis.org/generator/configreference/table.html -->
+    <table
+      tableName="batch_%"
+      enableInsert="false"
+      enableUpdateByPrimaryKey="false"
+      enableUpdateByExample="false"
+      enableDeleteByPrimaryKey="false"
+      enableDeleteByExample="false"
+      enableSelectByPrimaryKey="true"
+      enableSelectByExample="true"
+      enableCountByExample="true"
+      modelType="flat">
+    </table>
+
+  </context>
+</generatorConfiguration>
